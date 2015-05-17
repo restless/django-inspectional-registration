@@ -134,8 +134,10 @@ class DefaultRegistrationBackend(RegistrationBackendBase):
         if send_email is None:
             send_email = settings.REGISTRATION_REGISTRATION_EMAIL
 
+        full_name = "{} {}".format(supplement.first_name, supplement.last_name).strip() or username
+
         new_user = RegistrationProfile.objects.register(
-            username, email, self.get_site(request),
+            username, email, full_name, self.get_site(request),
             send_email=send_email,
         )
         profile = new_user.registration_profile

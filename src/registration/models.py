@@ -82,7 +82,7 @@ class RegistrationManager(models.Manager):
 
     """
     @transaction_atomic
-    def register(self, username, email, site, send_email=True):
+    def register(self, username, email, full_name, site, send_email=True):
         """register new user with ``username`` and ``email``
 
         Create a new, inactive ``User``, generate a ``RegistrationProfile``
@@ -109,7 +109,7 @@ class RegistrationManager(models.Manager):
         profile = self.create(user=new_user)
 
         if send_email:
-            profile.send_registration_email(site)
+            profile.send_registration_email(site, full_name)
 
         return new_user
 
@@ -401,6 +401,7 @@ class RegistrationProfile(models.Model):
         if self.activation_key_expired():
             return 'expired'
         return self._status
+
     def _set_status(self, value):
         """set inspection status of this profile
 
@@ -486,7 +487,7 @@ class RegistrationProfile(models.Model):
         send_mail(subject, message,
                   settings.DEFAULT_FROM_EMAIL, [self.user.email])
 
-    def send_registration_email(self, site):
+    def send_registration_email(self, site, full_name):
         """send registration email to the user associated with this profile
 
         Send a registration email to the ``User`` associated with this
@@ -517,7 +518,10 @@ class RegistrationProfile(models.Model):
             A ``RegistrationProfile`` instance of the registration
 
         """
-        self._send_email(site, 'registration')
+        extra_context = {
+            'full_name': full_name,
+        }
+        self._send_email(site, 'registration', extra_context)
 
     def send_acceptance_email(self, site, message=None):
         """send acceptance email to the user associated with this profile

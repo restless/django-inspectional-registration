@@ -103,7 +103,7 @@ class RegistrationAdminForm(forms.ModelForm):
         fail_message = 'update' if self.instance.pk else 'create'
         opts = self.instance._meta
         if self.errors:
-            raise ValueError("The %s chould not be %s because the data did'nt"
+            raise ValueError("The %s could not be performed %s because the data did'nt"
                              "validate." % (opts.object_name, fail_message))
         action_name = self.cleaned_data['action_name']
         message = self.cleaned_data['message']
