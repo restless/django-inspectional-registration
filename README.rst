@@ -8,32 +8,25 @@ django-inspectional-registration
     :target: https://coveralls.io/r/lambdalisue/django-inspectional-registration/
     :alt: Coverage
 
-.. image:: https://pypip.in/d/django-inspectional-registration/badge.png
-    :target: https://pypi.python.org/pypi/django-inspectional-registration/
-    :alt: Downloads
+.. image:: https://requires.io/github/lambdalisue/django-inspectional-registration/requirements.svg?branch=master
+    :target: https://requires.io/github/lambdalisue/django-inspectional-registration/requirements/?branch=master
+    :alt: Requirements Status
 
-.. image:: https://pypip.in/v/django-inspectional-registration/badge.png
-    :target: https://pypi.python.org/pypi/django-inspectional-registration/
-    :alt: Latest version
+.. image:: https://landscape.io/github/lambdalisue/django-inspectional-registration/master/landscape.png
+    :target: https://landscape.io/github/lambdalisue/django-inspectional-registration/master
+    :alt: Code Health
 
-.. image:: https://pypip.in/wheel/django-inspectional-registration/badge.png
-    :target: https://pypi.python.org/pypi/django-inspectional-registration/
-    :alt: Wheel Status
+.. image:: https://scrutinizer-ci.com/g/lambdalisue/django-inspectional-registration/badges/quality-score.png?b=master
+    :target: https://scrutinizer-ci.com/g/lambdalisue/django-inspectional-registration/inspections
+    :alt: Inspection
 
-.. image:: https://pypip.in/egg/django-inspectional-registration/badge.png
-    :target: https://pypi.python.org/pypi/django-inspectional-registration/
-    :alt: Egg Status
-
-.. image:: https://pypip.in/license/django-inspectional-registration/badge.png
-    :target: https://pypi.python.org/pypi/django-inspectional-registration/
-    :alt: License
 
 Author
     Alisue <lambdalisue@hashnote.net>
 Supported python versions
     2.6, 2.7, 3.2, 3.3, 3.4
 Supported django versions
-    1.3 - 1.6, and 1.7
+    1.5 - 1.8
 
 django-inspectional-registration is a enhanced application of
 django-registration_. The following features are available
@@ -122,4 +115,13 @@ This changes were introduced from version 0.4.0, to keep the backward compatibil
     REGISTRATION_DJANGO_AUTH_URL_NAMES_PREFIX = 'auth_'
     REGISTRATION_DJANGO_AUTH_URL_NAMES_SUFFIX = ''
 
+Because of an `issue#36 <https://github.com/lambdalisue/django-inspectional-registration/issues/36>`_, django-inspectional-registration add the following new option.
 
+-   ``REGISTRATION_USE_OBJECT_PERMISSION``
+    If it is ``True``, django-inspectional-registration pass ``obj`` to ``request.user.has_perm`` in ``RegistrationAdmin.has_*_permission()`` methods. A default permission backend of Django does not support object permission thus it should be ``False`` if you don't use extra permission backends such as `django-permission <https://lambdalisue/django-permission>`_.
+
+This change was introduced from version 0.4.7. To keep backward compatibility, write the following in your settings module.
+
+.. code:: python
+
+    REGISTRATION_USE_OBJECT_PERMISSION = True

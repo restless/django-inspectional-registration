@@ -48,7 +48,6 @@ import django
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.contrib import admin
-from django.contrib.admin.util import unquote
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -65,6 +64,7 @@ from registration.admin.forms import RegistrationAdminForm
 from registration.compat import import_module
 from registration.compat import force_unicode
 from registration.compat import transaction_atomic
+from registration.compat import unquote
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -215,14 +215,20 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     def has_accept_permission(self, request, obj):
         """whether the user has accept permission"""
+        if not settings.REGISTRATION_USE_OBJECT_PERMISSION:
+            obj = None
         return request.user.has_perm('registration.accept_registration', obj)
 
     def has_reject_permission(self, request, obj):
         """whether the user has reject permission"""
+        if not settings.REGISTRATION_USE_OBJECT_PERMISSION:
+            obj = None
         return request.user.has_perm('registration.reject_registration', obj)
 
     def has_activate_permission(self, request, obj):
         """whether the user has activate permission"""
+        if not settings.REGISTRATION_USE_OBJECT_PERMISSION:
+            obj = None
         return request.user.has_perm('registration.activate_user', obj)
 
     def get_actions(self, request):
@@ -366,14 +372,21 @@ class RegistrationAdmin(admin.ModelAdmin):
                 inline_instances.append(inline_instance)
         return inline_instances
 
-    def get_object(self, request, object_id):
+    def get_object(self, request, object_id, from_field=None):
         """add ``request`` instance to model instance and return
 
         To get ``request`` instance in form, ``request`` instance is stored
         in the model instance.
 
         """
-        obj = super(RegistrationAdmin, self).get_object(request, object_id)
+        if django.VERSION < (1, 8, 0):
+            obj = super(RegistrationAdmin, self).get_object(request, object_id)
+        else:
+            # Note:
+            #   from_field was introduced from django 1.8
+            obj = super(RegistrationAdmin, self).get_object(request,
+                                                            object_id,
+                                                            from_field)
         if obj:
             attr_name = settings._REGISTRATION_ADMIN_REQ_ATTR_NAME_IN_MODEL_INS
             setattr(obj, attr_name, request)
